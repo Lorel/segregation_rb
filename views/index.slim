@@ -1,0 +1,164 @@
+doctype html
+html
+    head
+        title Wator : Tunas VS Sharks
+        meta name="keywords" content="template language"
+        meta name="author" content="havet/douillyez"
+        link rel="icon" type="image/png" href="favicon.png"
+        link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"
+        script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
+        script src="http://code.highcharts.com/highcharts.js"
+        script src="http://code.highcharts.com/modules/exporting.js"
+        script src="lib/Chart.js/Chart.js"
+        css:
+            h1{
+                padding: 20px 0;            
+            }
+            #content {
+                width: 1400px;
+                margin: auto;
+            }
+            #init {
+                padding: 30px 0;
+            }
+            #world {
+                border-collapse: collapse;
+                padding: 50px;
+                border: 1px solid lightblue;
+                float: left;
+            }
+            #world td {
+                width: 10px;
+                height: 10px;
+            }
+            .blue{ background-color: blue; }
+            .green{ background-color: green; }
+            #infos {
+                float: left;
+            }
+            #infos ul {
+                list-style: none;
+            }
+            #infos p {
+                font-size: 18px;
+            }
+
+    body
+        #content
+            h1 Schelling Segregation Simulation
+
+            form#init.form-inline
+                .form-group
+                    input.form-control name="size" placeholder="Taille"
+                    input.form-control name="blue_population" placeholder="Population de bleus"
+                    input.form-control name="green_population" placeholder="Population de verts"
+                    input.form-control name="satisfaction_rate" placeholder="Taux satisfaction"
+                    button.btn name="run"
+                        'Run !
+
+            table#world
+
+            #infos
+                ul
+                    li
+                        'Nombre d'itérations :
+                        strong#iterations
+                    li
+                        'Taux global de satisfaction :
+                        strong#global_satisfaction_rate
+                    
+    javascript:
+        var running,
+            iterations = 0,
+            delay = 100;
+
+        var sizeSegregation,
+            blues,
+            greens,
+            statisfaction_rate;
+
+        $( "#init" ).on( 'click', 'button[name="run"]', function(e){
+            e.preventDefault(); e.stopPropagation();
+
+            window.running = false;
+
+            if ( $('input[name="size"]').val() ) { window.sizeSegregation = $('input[name="size"]').val(); } else { window.sizeSegregation = 50; $('input[name="size"]').val(window.sizeSegregation); }
+            if ( $('input[name="blue_population"]').val() ) { window.blues = $('input[name="blue_population"]').val(); } else { window.blues = 1000; $('input[name="blue_population"]').val(window.blues); }
+            if ( $('input[name="green_population"]').val() ) { window.greens = $('input[name="green_population"]').val(); } else { window.greens = 1000; $('input[name="green_population"]').val(window.greens); }
+            if ( $('input[name="satisfaction_rate"]').val() ) { window.satisfaction_rate = $('input[name="satisfaction_rate"]').val(); } else { window.satisfaction_rate = 30; $('input[name="satisfaction_rate"]').val(window.satisfaction_rate); }
+
+            window.init();
+            window.running = confirm("L'expérience a été initialisée, appuyez sur OK pour démarrer\n(à tout moment, vous pouvez arrêter et redémarrer l'expérience en appuyant sur la touche 'S')");
+            window.run();
+        });
+
+        $(document).on('keypress', function(event) {
+            if ( event.which == 115 ) {
+                window.running ? alert('Arrêt') : alert('Redémarrage');
+                window.running = !window.running;
+                if ( window.running ) {
+                    window.run();
+                }
+            }
+        });
+
+        function call( url ) {
+
+            $.ajax({
+                url: url,
+                context: $( "#content" )
+            }).done(function(data) {
+                var $this = $( this ),
+                    $table = $this.find( '#world' ),
+                    $iterations = $this.find( '#iterations' ),
+                    $global_satisfaction_rate = $this.find( '#global_satisfaction_rate' );
+
+                $( this ).addClass( "done" );
+
+                // datas process
+                window.iterations = data.iteration;
+                $iterations.text( window.iterations );
+                // $global_satisfaction_rate.text( data.global_satisfaction_rate );
+
+                // data process END
+
+                // update grid
+                $table.empty();
+
+                $.each( data.grid, function( index, line ) {
+                    var $tr = $( '<tr>' );
+
+                    $.each( line, function( index, square ) {
+                        var $td = $( '<td>' );
+
+                        if ( square != null ) {
+                            $td.addClass( square );
+                        }
+                        $tr.append( $td );
+                    });
+
+                    $table.append( $tr );
+                });
+                // update grid END
+
+            }).fail(function( error ) {
+                console.log(error);
+            }).always(function() {
+                setTimeout( turn, window.delay );
+            });
+        }
+
+        function init() {
+            //init/:size/:blue_population/:green_population/:satifaction_rate
+            call( "init/" + window.sizeSegregation + "/" + window.blues + "/" + window.greens + "/" + window.satifaction_rate);
+        }
+
+        function turn() {
+            if ( window.running ) {
+                call( "turn" );
+            }
+        }
+
+        function run() {
+            turn();
+        }

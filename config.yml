@@ -1,11 +1,8 @@
 params:
-  iterations: 30
+  iterations: 100
   dimensions: 50
   population: 50
-  blue_population: 1000
-  green_population: 1000
+  blue_population: 800
+  green_population: 800
   red_population: 0
   satisfaction_rate: 30
-  blue_satisfaction_rate: 30
-  green_satisfaction_rate: 30
-  red_satisfaction_rate: 30

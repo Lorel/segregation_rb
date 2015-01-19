@@ -5,16 +5,8 @@ class Agent < Marsys::Agent
     super
   end
 
-  # def to_json(options = {})
-  #   super
-  # end
-
   def move
-    super if similar_rate < @satisfaction_rate
-  end
-
-  def turn
-    super
+    move_far if similar_rate < @satisfaction_rate
   end
 
   def similar_rate

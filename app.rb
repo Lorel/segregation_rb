@@ -4,11 +4,12 @@ require 'json'
 require 'slim'
 
 load "agent.rb"
+load "environment.rb"
 load "core.rb"
 
 class App < Sinatra::Base
   use Rack::Session::Pool
-  set :public_folder, File.dirname(__FILE__) + '/../static'
+  set :public_folder, File.dirname(__FILE__) + '/static'
 
   get '/' do
     slim :index
@@ -23,7 +24,7 @@ class App < Sinatra::Base
     }
     session[:instance] = Core.new options
     content_type :json
-    session[:instance].environment.to_json
+    session[:instance].to_json
   end
 
   get '/turn' do
@@ -34,7 +35,7 @@ class App < Sinatra::Base
     end
 
     content_type :json
-    session[:instance].environment.to_json
+    session[:instance].to_json
   end
 
   run! if app_file == $0 # run Sinatra

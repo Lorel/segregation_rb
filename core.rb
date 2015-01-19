@@ -1,33 +1,15 @@
-# require 'marsys'
-# require 'pp'
-
-# load "agent.rb"
-
 class Core < Marsys::Core
   def initialize(options={})
-    @agents = [:blue, :green, :red]
+    @agents = [:blue, :green]
+    @environment = Environment.new(@agents,options)
     super(options)
   end
 
-  def display
-    @environment.display_grid
-    display_globlal_segregation_rate
-  end
-
-  def display_globlal_segregation_rate
-    puts "Global segregation rate : #{global_similar_rate}"
-    puts "Number of iterations : #{@iteration}"
+  def to_json(options = {})
+    super(options.merge({ stop_condition: stop_condition }))
   end
 
   def stop_condition
-    @environment.agents.all? { |agent| agent.similar_rate >= Marsys::Settings.params[:satisfaction_rate] }
-  end
-
-  def global_similar_rate
-    @environment.agents.inject(0.0){ |sum,agent| sum .+ agent.similar_rate } ./ @environment.agents.count
+    super || @environment.agents.all? { |agent| agent.similar_rate >= Marsys::Settings.params[:satisfaction_rate] }
   end
 end
-
-# test = Core.new
-# test.display
-# test.run

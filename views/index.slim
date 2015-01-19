@@ -1,7 +1,7 @@
 doctype html
 html
     head
-        title Wator : Tunas VS Sharks
+        title Schelling Segregation Simulation
         meta name="keywords" content="template language"
         meta name="author" content="havet/douillyez"
         link rel="icon" type="image/png" href="favicon.png"
@@ -52,7 +52,7 @@ html
                     input.form-control name="size" placeholder="Taille"
                     input.form-control name="blue_population" placeholder="Population de bleus"
                     input.form-control name="green_population" placeholder="Population de verts"
-                    input.form-control name="satisfaction_rate" placeholder="Taux satisfaction"
+                    input.form-control name="satisfaction_rate" placeholder="Taux de satisfaction"
                     button.btn name="run"
                         'Run !
 
@@ -89,7 +89,7 @@ html
 
             window.init();
             window.running = confirm("L'expérience a été initialisée, appuyez sur OK pour démarrer\n(à tout moment, vous pouvez arrêter et redémarrer l'expérience en appuyant sur la touche 'S')");
-            window.run();
+            if ( window.running ) { window.run(); }
         });
 
         $(document).on('keypress', function(event) {
@@ -118,7 +118,9 @@ html
                 // datas process
                 window.iterations = data.iteration;
                 $iterations.text( window.iterations );
-                // $global_satisfaction_rate.text( data.global_satisfaction_rate );
+                $global_satisfaction_rate.text( data.global_similar_rate );
+                window.running = window.running && !data.stop_condition;
+                console.log(data);
 
                 // data process END
 
@@ -150,7 +152,7 @@ html
 
         function init() {
             //init/:size/:blue_population/:green_population/:satifaction_rate
-            call( "init/" + window.sizeSegregation + "/" + window.blues + "/" + window.greens + "/" + window.satifaction_rate);
+            call( "init/" + window.sizeSegregation + "/" + window.blues + "/" + window.greens + "/" + window.satisfaction_rate);
         }
 
         function turn() {

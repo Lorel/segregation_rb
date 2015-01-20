@@ -1,25 +1,23 @@
 class Environment < Marsys::Environment
+  attr_accessor :blue_population, :green_population
 
-  def initialize(agents=[], options={})
-    super(agents, options)
+  def initialize(agents_type=[], options={})
+    super(agents_type, options)
+
+    @agents_type.each do |type|
+      self.send("#{type}_population=",Marsys::Settings.params["#{type}_population".to_sym]||Marsys::Settings.params[:population])
+    end
+    @global_population = agents.count
     similar_rate_methods_initialize
   end
 
-  def to_json(options = {})
-    json = {
-      grid:                 @grid.map{|line| line.map{ |square|
-                              square.content ? square.content.class.to_s.downcase : nil
-                            }},
-      iteration:            @iteration,
-      global_similar_rate:   global_similar_rate,
-      stop_condition:        options[:stop_condition]
-    }
+  def add_hash_to_json
+    hash = { global_similar_rate:   global_similar_rate }
     @agents_type.each do |type|
-      json[type.pluralize] = self.send(type.pluralize)                                  # add collection of agents of this type
-      json["#{type}s_similar_rate".to_sym] = self.send("#{type}s_similar_rate".to_sym)  # add census informations for agents of this type
+      hash[type.pluralize] = self.send(type.pluralize)                                  # add collection of agents of this type
+      hash["#{type}s_similar_rate".to_sym] = self.send("#{type}s_similar_rate".to_sym)  # add census informations for agents of this type
     end
-
-    json.to_json
+    hash
   end
 
   def display
@@ -33,7 +31,8 @@ class Environment < Marsys::Environment
   end
 
   def global_similar_rate
-    agents.inject(0.0){ |sum,agent| sum .+ agent.similar_rate } ./ agents.count
+    puts @global_population
+    agents.inject(0.0){ |sum,agent| sum .+ agent.similar_rate } ./ @global_population
   end
 
   private
@@ -43,7 +42,7 @@ class Environment < Marsys::Environment
         # with population of type for each age range
         self.class.send( :define_method, "#{type.pluralize}_similar_rate", Proc.new{
           specific_agents = self.send(type.pluralize)
-          specific_agents.inject(0.0){ |sum,agent| sum .+ agent.similar_rate } ./ specific_agents.count
+          specific_agents.inject(0.0){ |sum,agent| sum .+ agent.similar_rate } ./ self.send("#{type}_population")
         })
       end
     end

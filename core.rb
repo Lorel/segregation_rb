@@ -5,8 +5,8 @@ class Core < Marsys::Core
     super(options)
   end
 
-  def to_json(options = {})
-    super(options.merge({ stop_condition: stop_condition? }))
+  def add_hash_to_json
+    { stop_condition: stop_condition? }
   end
 
   def stop_condition?

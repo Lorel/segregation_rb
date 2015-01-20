@@ -33,5 +33,5 @@ Stop/Restart the simulation by using 'S' key
 ### SCREENSHOTS
 
 ![Segregation console output](http://snag.gy/6QqYt.jpg)
-![Segregation runtime](http://snag.gy/AxhQK.jpg)
+![Segregation runtime](http://snag.gy/Q478P.jpg)
 

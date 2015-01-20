@@ -10,8 +10,8 @@ class Agent < Marsys::Agent
   end
 
   def similar_rate
-    # return 0 if agent has not any neighboor
-    return 0.0 if [@environment.squares_around_with_blue(@square),@environment.squares_around_with_green(@square)].flatten.count == 0
+    # return 50% if agent has not any neighboor
+    return 50.0 if [@environment.squares_around_with_blue(@square),@environment.squares_around_with_green(@square)].flatten.count == 0
     @environment.send("squares_around_with_#{self.class.to_s.downcase}", @square).count .* 100.0 ./ ([@environment.squares_around_with_blue(@square),@environment.squares_around_with_green(@square)].flatten.count)
   end
 end

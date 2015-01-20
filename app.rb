@@ -20,7 +20,7 @@ class App < Sinatra::Base
       dimensions:                 params[:size].to_i,
       blue_population:            params[:blue_population].to_i,
       green_population:           params[:green_population].to_i,
-      satifaction_rate:           params[:satifaction_rate].to_i
+      satisfaction_rate:           params[:satifaction_rate].to_i
     }
     session[:instance] = Core.new options
     content_type :json
